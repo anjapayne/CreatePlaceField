@@ -1,13 +1,14 @@
-function [x_pos, y_pos, time_map, tVideo, map] = createPlaceField(mClust_spikeTimes, position)
+function [x_pos, y_pos, time_map, tVideo, rate_map] = createPlaceField(mClust_spikeTimes, position)
 % Script to create place field based on firing rate of a given neuron
 % Written August 4, 2017
 % Last modified by Anja Payne
 
 % Load Data
 position = load(position);
-tSpikes = load(mClust_spikeTimes); 
-tSpikes = tSpikes.tSpikes_Revised; 
-tSpikes = floor(tSpikes/10000); %divide to get units of seconds
+time     = position.time;
+tSpikes  = load(mClust_spikeTimes); 
+tSpikes  = tSpikes.tSpikes_Revised; 
+tSpikes  = floor(tSpikes/10000); %divide to get units of seconds
 
 % Define Variables
 bins = 35;
@@ -15,6 +16,7 @@ sLength = 70; %length of box: 70cm
 binWidth = sLength/bins;
 smooth_by = 5; %smoothing factor that is used when calculating the rate map
 mapAxis = (-sLength/2+binWidth/2):binWidth:(sLength/2-binWidth/2);
+suppressRedraw = 1;
 
 % Smooth the position files
 x_pos = position.pos(1,:);
@@ -32,10 +34,22 @@ end
 % in the variables section above)
 time_map = findTimeMap(x_pos, y_pos, tSpikes, bins, sLength, binWidth);
 
-rate_map = calculateRateMap(tSpikes, x_pos(tSpikes), y_pos(tSpikes), x_pos, y_pos, t , smooth_by, mapAxis); %function is called 'ratemap' in Leutgeb code
- 
+% Calculate the rate map
+rate_map = calculateRateMap(tSpikes, x_pos(tSpikes), y_pos(tSpikes), x_pos, y_pos, time , smooth_by, mapAxis); %function is called 'ratemap' in Leutgeb code
+peak_rate = max(max(rate_map))
+
+% Plot maps
+fieldAxis = linspace(-sLength/2,sLength/2,bins);
+
+% Need to remove unvisited parts of the box from the map
+drawField(rate_map, mapAxis, 'jet', peak_rate, peak_rate, 'testing', 'AP', 'on');
+set(gcf,'Color', [1 1 1]);
+drawnow;
 
 
+
+
+%{
 % Old Analysis to be modified
 window = 50; 
 numSpikes = zeros(1, max(tSpikes)); 
@@ -64,17 +78,17 @@ y_pos = round(downsample(y_pos, 60));
 y_pos_new = round(y_pos/20);
  
 
-max(x_pos_new)-min(x_pos_new)
-max(y_pos_new)-min(y_pos_new)
+max(x_pos_new)-min(x_pos_new);
+max(y_pos_new)-min(y_pos_new);
 
 map = zeros(max(x_pos_new)-min(x_pos_new)+1, max(y_pos_new)-min(y_pos_new)+1); 
-length(numSpikes)
-length(x_pos_new)
-length(y_pos_new)
+length(numSpikes);
+length(x_pos_new);
+length(y_pos_new);
 for j = 1:length(numSpikes);
-    j
-    index_x = x_pos_new(j)-min(x_pos_new)+1
-    index_y = y_pos_new(j)-min(y_pos_new)+1
+    
+    index_x = x_pos_new(j)-min(x_pos_new)+1;
+    index_y = y_pos_new(j)-min(y_pos_new)+1;
 
     if isnan(x_pos_new(j)) == 1 || isnan(y_pos_new(j)) == 1;
         continue;
@@ -103,7 +117,7 @@ hold on;
 title('Spike Locations Overlaid on Animal Trajectory', 'FontSize', 16); 
 plot(-x_pos, -y_pos', 'color', [0.57 0.57 0.57]);
 scatter(-x_pos(tSpikes)', -y_pos(tSpikes)', '.r'); 
-
+%}
 
 end
 

@@ -1,5 +1,5 @@
 function map = calculateRateMap(ts,spkx,spky,posx,posy,post,h,mapAxis)
-% Script to find the center of the behavioral box
+% Script to calculate the rate map
 % Written in 2013 by members of Stefan Leutgeb's lab
 % Last modified by Anja Payne September 1, 2017
 
@@ -14,6 +14,6 @@ for y = mapAxis
     xx = 0;
     for x = mapAxis
         xx = xx + 1;
-        map(yy,xx) = rate_estimator(ts,spkx,spky,x,y,invh,posx,posy,post);
+        map(yy,xx) = rateEstimator(ts,spkx,spky,x,y,invh,posx,posy,post);
     end
 end
