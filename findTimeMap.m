@@ -23,7 +23,7 @@ for ii = 1:bins
     pcx = pcx + binWidth;
     I = find(posx >= pcx & posx < pcx+binWidth);
     % Y-coord for current bin position
-    pcy = -sLength/2-binWidth/2;;
+    pcy = -sLength/2-binWidth/2;
     for jj=1:bins
         % Increment the y coordinate
         pcy = pcy + binWidth;

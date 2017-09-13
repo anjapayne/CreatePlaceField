@@ -9,10 +9,10 @@ posx(naninds)=[];posy(naninds)=[];post(naninds) = [];
 invh = 1/h;
 map = zeros(length(mapAxis),length(mapAxis));
 yy = 0;
-for y = mapAxis
+for y = 1:mapAxis %modified from y=mapAxis
     yy = yy + 1;
     xx = 0;
-    for x = mapAxis
+    for x = 1:mapAxis %modified from x=mapAxis
         xx = xx + 1;
         map(yy,xx) = rateEstimator(ts,spkx,spky,x,y,invh,posx,posy,post);
     end

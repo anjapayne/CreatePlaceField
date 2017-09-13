@@ -1,4 +1,4 @@
-function [x_pos, y_pos, x_spike, y_spike, time_map, rate_map, mapAxis] = createPlaceField(mClust_spikeTimes, position)
+function [x_pos, y_pos, x_spike, y_spike, rate_map, time_map] = createPlaceField(mClust_spikeTimes, position)
 
 %function [x_pos, y_pos, time_map, time, tSpikes] = createPlaceField(mClust_spikeTimes, position)
 % Script to create place field based on firing rate of a given neuron
@@ -26,8 +26,8 @@ smooth_by = 5; %smoothing factor that is used when calculating the rate map
 mapAxis = (-sLength/2+binWidth/2):binWidth:(sLength/2-binWidth/2);
 %mapAxis = min(x_pos):max(x_pos); 
 suppressRedraw = 1;
-x_pos = x_pos_pixel * sLength/(max(x_pos_pixel)-min(x_pos_pixel)); % convert pixels to cm
-y_pos = y_pos_pixel * sLength/(max(y_pos_pixel)-min(y_pos_pixel)); % convert pixels to cm
+x_pos = (max(x_pos_pixel)-min(x_pos_pixel))/bins; 
+y_pos = (max(y_pos_pixel)-min(y_pos_pixel))/bins;
 
 % Smooth the position files
 for k = 8:length(x_pos)-7; 
@@ -60,9 +60,10 @@ x_spike = NaN(1, length(tSpikes_matched));
 y_spike = NaN(1, length(tSpikes_matched)); 
 for kk = 1:length(tSpikes_matched);
     index = find(time == tSpikes_matched(kk)); 
-    x_spike(kk) = x_pos(index); 
-    y_spike(kk) = y_pos(index);
+    x_spike(kk) = x_pos_pixel(index); 
+    y_spike(kk) = y_pos_pixel(index);
 end
+x_spike = 
 
 rate_map = calculateRateMap(tSpikes, x_spike, y_spike, x_pos, y_pos, time , smooth_by, mapAxis); %function is called 'ratemap' in Leutgeb code
 peak_rate = max(max(rate_map))
@@ -158,6 +159,7 @@ hold on;
 title('Spike Locations Overlaid on Animal Trajectory', 'FontSize', 16); 
 plot(-x_pos, -y_pos', 'color', [0.57 0.57 0.57]);
 scatter(-x_pos(tSpikes)', -y_pos(tSpikes)', '.r'); 
+%}
 %}
 %}
 end
